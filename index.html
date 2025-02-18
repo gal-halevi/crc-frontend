@@ -1,46 +1,61 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Resume</title>
-        <meta name="description" content="Cloud resume challenge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <div class="section">
-            <h2>Summary</h2>
-            <p>Cloud Engineer with a strong background in software development and a passion for automation, infrastructure as code, and DevOps best practices...</p>
-        </div>
-        
-        <div class="section skills">
-            <h2>Skills</h2>
-            <ul>
-                <li>AWS</li><li>Terraform</li><li>GitHub Actions</li><li>Python</li><li>Docker</li><li>Kubernetes</li><li>CloudWatch</li>
-            </ul>
-        </div>
-        
-        <div class="section">
-            <h2>Certifications</h2>
-            <p>AWS Certified Cloud Practitioner (2025)</p>
-        </div>
-        
-        <div class="section">
-            <h2>Projects</h2>
-            <h3>Cloud Resume Challenge</h3>
-            <p>Built a fully serverless website hosted on AWS S3, with CloudFront for CDN and Route 53 for domain management...</p>
-        </div>
-        
-        <div class="section">
-            <h2>Experience</h2>
-            <h3>Software Engineer | [Your Company]</h3>
-            <p>Developed and deployed cloud-based applications using AWS services...</p>
-        </div>
-        
-        <div class="section">
-            <h2>Education</h2>
-            <p>Bachelor’s Degree in Computer Science | [Your University]</p>
-        </div>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Resume</title>
+    <meta name="description" content="Cloud resume challenge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="section">
+        <h2>Summary</h2>
+        <p>Cloud Engineer with a strong background in software development and a passion for automation, infrastructure as code, and DevOps best practices...</p>
+      </div>
+      
+      <div class="section skills">
+        <h2>Skills</h2>
+        <ul>
+          <li>AWS</li>
+          <li>Terraform</li>
+          <li>GitHub Actions</li>
+          <li>Python</li>
+          <li>Docker</li>
+          <li>Kubernetes</li>
+          <li>CloudWatch</li>
+        </ul>
+      </div>
+      
+      <div class="section">
+        <h2>Certifications</h2>
+        <p>AWS Certified Cloud Practitioner (2025)</p>
+      </div>
+      
+      <div class="section">
+        <h2>Projects</h2>
+        <h3>Cloud Resume Challenge</h3>
+        <p>Built a fully serverless website hosted on AWS S3, with CloudFront for CDN and Route 53 for domain management...</p>
+      </div>
+      
+      <div class="section">
+        <h2>Experience</h2>
+        <h3>Software Engineer | [Your Company]</h3>
+        <p>Developed and deployed cloud-based applications using AWS services...</p>
+      </div>
+      
+      <div class="section">
+        <h2>Education</h2>
+        <p>Bachelor’s Degree in Computer Science | [Your University]</p>
+      </div>
+    </div>
+
+    <!-- Visitor Counter is now placed outside the container -->
+    <div class="counter">
+      Visitor Count: <span id="visitorCount">0</span>
+    </div>
+
+    <script src="visitor_counter.js"></script>
+  </body>
 </html>

@@ -3,34 +3,47 @@ body {
     margin: 40px; 
     padding: 20px; 
     background-color: #f4f4f4; 
-}
-
-.container { 
+    text-align: center; /* Centers elements like the counter */
+  }
+  
+  .container { 
     max-width: 800px; 
     margin: auto; 
     background: white; 
     padding: 20px; 
     border-radius: 10px; 
     box-shadow: 0 0 10px rgba(0,0,0,0.1); 
-}
-
-h1, h2 { 
+    text-align: center; /* Center the resume text inside the container */
+  }
+  
+  h1, h2 { 
     color: #333; 
-}
-
-.section { 
+  }
+  
+  .section { 
     margin-bottom: 20px; 
-}
-
-.skills ul { 
+  }
+  
+  .skills ul { 
     list-style-type: none; 
     padding: 0; 
-}
-
-.skills li { 
+  }
+  
+  .skills li { 
     background: #ddd; 
     display: inline-block; 
     padding: 5px 10px; 
     margin: 5px; 
     border-radius: 5px; 
-}
+  }
+  
+  .counter {
+    font-size: 2em;
+    color: #555;
+    margin-top: 40px; /* Creates space between the container and the counter */
+    background: #fff;
+    display: inline-block;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
