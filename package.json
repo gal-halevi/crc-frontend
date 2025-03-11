@@ -1,0 +1,22 @@
+{
+  "name": "crc-frontend",
+  "version": "1.0.0",
+  "main": "visitor_counter.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gal-halevi/crc-frontend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gal-halevi/crc-frontend/issues"
+  },
+  "homepage": "https://github.com/gal-halevi/crc-frontend#readme",
+  "description": "",
+  "devDependencies": {
+    "cypress": "^14.1.0"
+  }
+}
