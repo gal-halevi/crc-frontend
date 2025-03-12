@@ -19,6 +19,10 @@ async function updateCounter(counterElement) {
             headers: {
                 'Accept': 'application/json',
             },
+            body: JSON.stringify({
+                'tableName': config.tableName,
+                'primaryKey': config.primaryKey
+            })
         });
 
         if (!response.ok) {
