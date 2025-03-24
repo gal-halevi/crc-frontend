@@ -54,4 +54,16 @@ jobs:
           TF_VAR_web_assets_path: "../../src"
           TF_VAR_default_root_object: "index.html"
           TF_VAR_env: "prod"
-        run: terraform apply -auto-approve -input=false 
+        run: terraform apply -auto-approve -input=false
+
+      - name: Fetch API URL
+        id: api_url
+        run: |
+          api_url=$(jq -r '.apiUrl' src/config.json)
+          echo "API_URL=$api_url" >> "$GITHUB_OUTPUT"
+
+      - name: Run Smoke Tests
+        env:
+          CYPRESS_BASE_URL: https://www.mycrc.site
+          CYPRESS_API_URL: ${{steps.api_url.outputs.API_URL}}
+        uses: cypress-io/github-action@v6
