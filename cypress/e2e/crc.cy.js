@@ -1,6 +1,6 @@
 describe('My CRC - Smoke Test', () => {
   beforeEach(() => {
-    cy.visit('/src/html/index.html'); // Adjust the path if necessary
+    cy.visit('/html/index.html'); // Adjust the path if necessary
   });
 
   it('should update visitor count after API response', () => {
@@ -23,7 +23,7 @@ describe('My CRC - Smoke Test', () => {
         initialCount = parseInt(initialCount, 10); // Convert to integer
         cy.reload();
 
-        cy.wait(1000);
+        cy.wait(2000);
         
         cy.get("#visitorCount")
           .should("be.visible")
