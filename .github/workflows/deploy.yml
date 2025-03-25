@@ -65,7 +65,7 @@ jobs:
       - name: Get CloudFront Distribution ID
         id: cf_id
         run: |
-          cf_dist_id=$(terraform output -json | jq -r '.cloudfront_dist_id.value')
+          cf_dist_id=$(terraform output -raw cloudfront_dist_id)
           echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
 
       - name: Invalidate CloudFront Cache
