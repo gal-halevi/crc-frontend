@@ -56,11 +56,40 @@ jobs:
           TF_VAR_env: "prod"
         run: terraform apply -auto-approve -input=false
 
-      - name: Fetch API URL
+      - name: Get API URL
         id: api_url
         run: |
           api_url=$(jq -r '.apiUrl' src/config.json)
           echo "API_URL=$api_url" >> "$GITHUB_OUTPUT"
+
+      - name: Get CloudFront Distribution ID
+        id: cf_id
+        run: |
+          cf_dist_id=$(terraform output -raw cloudfront_dist_id)
+          echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
+
+      - name: Invalidate CloudFront Cache
+        env:
+          CF_DIST_ID: ${{steps.cf_id.outputs.CF_DIST_ID}}
+        run: |
+          invalidation_id=$(aws cloudfront create-invalidation \
+                              --distribution-id $CF_DIST_ID \
+                              --paths "/*" \
+                              --query 'Invalidation.Id' \
+                              --output text)
+          for i in {1..30}; do
+            STATUS=$(aws cloudfront get-invalidation \
+              --distribution-id $CF_DIST_ID \
+              --id $invalidation_id \
+              --query 'Invalidation.Status' --output text)
+            echo "Status: $STATUS"
+            if [ "$STATUS" = "Completed" ]; then
+              echo "✅ Invalidation completed"
+              break
+            fi
+            echo "Waiting..."
+            sleep 10
+          done
 
       - name: Run Smoke Tests
         env:
