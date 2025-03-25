@@ -64,6 +64,7 @@ jobs:
 
       - name: Get CloudFront Distribution ID
         id: cf_id
+        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
         run: |
           cf_dist_id=$(terraform output -raw cloudfront_dist_id)
           echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
