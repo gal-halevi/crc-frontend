@@ -67,7 +67,7 @@ jobs:
         working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
         run: |
           terraform output
-          cf_dist_id=$(terraform output -json | jq -r '.cloudfront_dist_id.value')
+          cf_dist_id=$(terraform output -json 2>/dev/null | jq -r '.cloudfront_dist_id.value')
           echo "id=$cf_dist_id"
           echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
 
