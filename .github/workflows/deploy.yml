@@ -40,6 +40,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
 
       - name: Terraform Init
         working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
@@ -66,7 +68,8 @@ jobs:
         id: cf_id
         working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
         run: |
-          cf_dist_id=$(terraform output -json | jq -r '.cloudfront_dist_id.value')
+          cf_dist_id=$(terraform output -raw cloudfront_dist_id)
+          echo "id=$cf_dist_id"
           echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
 
       - name: Invalidate CloudFront Cache
