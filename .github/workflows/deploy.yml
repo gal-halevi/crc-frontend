@@ -62,6 +62,16 @@ jobs:
           api_url=$(jq -r '.apiUrl' src/config.json)
           echo "API_URL=$api_url" >> "$GITHUB_OUTPUT"
 
+      - name: Debug terraform output
+        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
+        run: |
+          echo "Running terraform output directly:"
+          terraform output -raw cloudfront_dist_id
+      
+          echo "Capturing into a variable:"
+          foo=$(terraform output -raw cloudfront_dist_id 2>&1)
+          echo "foo=$foo"
+
       - name: Get CloudFront Distribution ID
         id: cf_id
         working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
