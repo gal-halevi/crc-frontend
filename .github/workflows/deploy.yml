@@ -94,6 +94,7 @@ jobs:
                               --paths "/*" \
                               --query 'Invalidation.Id' \
                               --output text)
+          ecoh "id=$invalidation_id"
           for i in {1..30}; do
             STATUS=$(aws cloudfront get-invalidation \
               --distribution-id $CF_DIST_ID \
