@@ -64,24 +64,11 @@ jobs:
           api_url=$(jq -r '.apiUrl' src/config.json)
           echo "API_URL=$api_url" >> "$GITHUB_OUTPUT"
 
-      - name: Debug terraform output
-        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
-        run: |
-          echo "Running terraform output directly:"
-          terraform output -raw cloudfront_dist_id
-      
-          echo "Capturing into a variable:"
-          foo=$(terraform output -raw cloudfront_dist_id 2>&1)
-          echo "foo=$foo"
-
       - name: Get CloudFront Distribution ID
         id: cf_id
         working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
         run: |
-          terraform output
-          foo=$(terraform output -raw cloudfront_dist_id)
-          echo "foo=$foo"
-          cf_dist_id=$(terraform output -json 2>/dev/null | jq -r '.cloudfront_dist_id.value')
+          cf_dist_id=$(terraform output -raw cloudfront_dist_id)
           echo "id=$cf_dist_id"
           echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
 
@@ -94,7 +81,7 @@ jobs:
                               --paths "/*" \
                               --query 'Invalidation.Id' \
                               --output text)
-          ecoh "id=$invalidation_id"
+          echo "id=$invalidation_id"
           for i in {1..30}; do
             STATUS=$(aws cloudfront get-invalidation \
               --distribution-id $CF_DIST_ID \
