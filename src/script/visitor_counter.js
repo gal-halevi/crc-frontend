@@ -40,7 +40,7 @@ async function updateCounter(counterElement) {
 }
 
 async function getConfig() {
-    const configResponse = await fetch('config.json');
+    const configResponse = await fetch('../config.json');
     if (!configResponse.ok) {
       throw new Error(`Failed to load config.json: ${configResponse.status}`);
     }

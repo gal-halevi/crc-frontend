@@ -26,7 +26,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::940482453420:role/oidc_frontend_role
+          role-to-assume: ${{vars.ROLE_TO_ASSUME}}
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,6 +39,9 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+        with:
+          # Causing issues when trying to capture terraform output
+          terraform_wrapper: false
 
       - name: Terraform Init
         working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
@@ -51,5 +54,51 @@ jobs:
           TF_VAR_alternate_domains: '["my.mycrc.site", "www.mycrc.site"]'
           TF_VAR_bucket_name: "crc-frontend"
           TF_VAR_web_assets_path: "../../src"
-          TF_VAR_default_root_object: "index.html"
-        run: terraform apply -auto-approve -input=false 
+          TF_VAR_default_root_object: "html/index.html"
+          TF_VAR_env: "prod"
+        run: terraform apply -auto-approve -input=false
+
+      - name: Get API URL
+        id: api_url
+        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
+        run: |
+          api_url=$(terraform output -raw BE_api_url)
+          echo $api_url
+          echo "API_URL=$api_url" >> "$GITHUB_OUTPUT"
+
+      - name: Get CloudFront Distribution ID
+        id: cf_id
+        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
+        run: |
+          cf_dist_id=$(terraform output -raw cloudfront_dist_id)
+          echo "id=$cf_dist_id"
+          echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
+
+      - name: Invalidate CloudFront Cache
+        env:
+          CF_DIST_ID: ${{steps.cf_id.outputs.CF_DIST_ID}}
+        run: |
+          invalidation_id=$(aws cloudfront create-invalidation \
+                              --distribution-id $CF_DIST_ID \
+                              --paths "/*" \
+                              --query 'Invalidation.Id' \
+                              --output text)
+          for i in {1..30}; do
+            STATUS=$(aws cloudfront get-invalidation \
+              --distribution-id $CF_DIST_ID \
+              --id $invalidation_id \
+              --query 'Invalidation.Status' --output text)
+            echo "Status: $STATUS"
+            if [ "$STATUS" = "Completed" ]; then
+              echo "✅ Invalidation completed"
+              break
+            fi
+            echo "Waiting..."
+            sleep 10
+          done
+
+      - name: Run Smoke Tests
+        env:
+          CYPRESS_BASE_URL: https://www.mycrc.site
+          CYPRESS_API_URL: ${{steps.api_url.outputs.API_URL}}
+        uses: cypress-io/github-action@v6
