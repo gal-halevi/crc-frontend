@@ -35,12 +35,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: gal-halevi/cloud-resume-challenge-iac
-          ref: test-ci
           path: ${{env.IAC_PATH}}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
+          # Causing issues when trying to capture terraform output
           terraform_wrapper: false
 
       - name: Terraform Init
