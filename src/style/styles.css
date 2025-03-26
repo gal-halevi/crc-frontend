@@ -9,7 +9,7 @@ body {
   .container { 
     max-width: 800px; 
     margin: auto; 
-    background: hsl(190, 100%, 52%); 
+    background: hsl(190, 58%, 84%); 
     padding: 20px; 
     border-radius: 10px; 
     box-shadow: 0 0 10px rgba(0,0,0,0.1); 
@@ -30,7 +30,7 @@ body {
   }
   
   .skills li { 
-    background: #ddd; 
+    background: #78dceb; 
     display: inline-block; 
     padding: 5px 10px; 
     margin: 5px; 
@@ -41,7 +41,7 @@ body {
     font-size: 2em;
     color: #555;
     margin-top: 40px; /* Creates space between the container and the counter */
-    background: hsl(190, 100%, 52%);
+    background: hsl(190, 58%, 84%);
     display: inline-block;
     padding: 20px;
     border-radius: 8px;
