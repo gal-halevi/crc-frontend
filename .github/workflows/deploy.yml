@@ -6,6 +6,11 @@ on:
     paths:
       - 'src/**'
   workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'prod'
 
 permissions:
   id-token: write
@@ -14,12 +19,12 @@ permissions:
 jobs:
   Deply:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env }}
     defaults:
       run:
         shell: bash
     env:
       IAC_PATH: terraform
-      FRONTEND_DIR: frontend
 
     steps:
       - name: Configure AWS
@@ -36,6 +41,7 @@ jobs:
         with:
           repository: gal-halevi/cloud-resume-challenge-iac
           path: ${{env.IAC_PATH}}
+          ref: support-for-multiple-envs
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -44,23 +50,21 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
+        working-directory: ${{env.IAC_PATH}}/${{vars.IAC_ENV_DIR}}
         run: terraform init
 
       - name: Deploy
-        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
+        working-directory: ${{env.IAC_PATH}}/${{vars.IAC_ENV_DIR}}
         env:
-          TF_VAR_domain_name:  "mycrc.site"
-          TF_VAR_alternate_domains: '["my.mycrc.site", "www.mycrc.site"]'
-          TF_VAR_bucket_name: "crc-frontend"
+          TF_VAR_domain_name:  ${{vars.DOMAIN_NAME}}
+          TF_VAR_alternate_domains: ${{vars.ALTERNATE_DOMAINS}}
           TF_VAR_web_assets_path: "../../src"
-          TF_VAR_default_root_object: "html/index.html"
-          TF_VAR_env: "prod"
+          TF_VAR_env: ${{vars.ENV}}
         run: terraform apply -auto-approve -input=false
 
       - name: Get API URL
         id: api_url
-        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
+        working-directory: ${{env.IAC_PATH}}/${{vars.IAC_ENV_DIR}}
         run: |
           api_url=$(terraform output -raw BE_api_url)
           echo $api_url
@@ -68,11 +72,19 @@ jobs:
 
       - name: Get CloudFront Distribution ID
         id: cf_id
-        working-directory: ${{env.IAC_PATH}}/${{env.FRONTEND_DIR}}
+        working-directory: ${{env.IAC_PATH}}/${{vars.IAC_ENV_DIR}}
         run: |
           cf_dist_id=$(terraform output -raw cloudfront_dist_id)
           echo "id=$cf_dist_id"
           echo "CF_DIST_ID=$cf_dist_id" >> "$GITHUB_OUTPUT"
+
+      - name: Get Domain Name
+        id: domain_name
+        working-directory: ${{env.IAC_PATH}}/${{vars.IAC_ENV_DIR}}
+        run: |
+          domain_name=$(terraform output -json | jq -r '.cloudfront_urls.value[0]')
+          echo "domain_name=$domain_name"
+          echo "DOMAIN_NAME=$domain_name" >> "$GITHUB_OUTPUT"
 
       - name: Invalidate CloudFront Cache
         env:
@@ -99,6 +111,6 @@ jobs:
 
       - name: Run Smoke Tests
         env:
-          CYPRESS_BASE_URL: https://www.mycrc.site
+          CYPRESS_BASE_URL: ${{steps.domain_name.outputs.DOMAIN_NAME}}
           CYPRESS_API_URL: ${{steps.api_url.outputs.API_URL}}
         uses: cypress-io/github-action@v6
